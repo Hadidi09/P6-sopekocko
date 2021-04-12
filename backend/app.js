@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 
 });
 
-mongoose.connect('mongodb+srv://hadradev:jeconfigurenode@cluster0coursnodejs.shdzy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://hadra-student:sopekocko@sopekocko.qlesq.mongodb.net/projet-6?retryWrites=true&w=majority',
 { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))

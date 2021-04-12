@@ -15,10 +15,9 @@ exports.createSauce = (req, res, next) =>
 
 exports.createAddLikes = (req, res, next) =>
 {
-    const userIdLike = JSON.parse(req.body.like)
+    
     const like = req.body.like
-    const sauceid = req.body
-    //const usersDisLiked = req.body.sauce[usersDisLiked]
+    
     
     console.log(like);
     Sauce.findOne({ _id: req.params.id })
@@ -27,24 +26,24 @@ exports.createAddLikes = (req, res, next) =>
             const userId = req.body.userId
             console.log(userId);
 
-            if (like === 1)
+            if (like == 1)
             {
                 Sauce.updateOne({ _id: req.params.id },
                     { $push: { usersLiked: userId }, $inc: { likes: 1 } })
                         .then(() => res.status(200).json("sauce aimée"))
                         .catch(error => res.status(400).json({ error }))
             }
-            else if (like === -1)
+            else if (like == -1)
             {
                 Sauce.updateOne({ _id: req.params.id },
                     { $push: { usersDisLiked: userId }, $inc: { dislikes: 1 } })
                         .then(() => res.status(200).json("sauce non aimée"))
                         .catch(error => res.status(400).json({ error }))
             }
-            else if (like === 0)
+            else if (like == 0)
             {
                 Sauce.updateOne({ _id: req.params.id },
-                    { $pull: { userIdLiked: userId } || { usersDisLiked: userId }, $inc: { likes: 0 } || { dislikes: 0 } })
+                    { $pull: { userIdLiked: userId } | { usersDisLiked: userId }, $inc: { likes: -1 } | { dislikes: -1 } })
                     .then(() => res.status(200).json("sauce égale zéro"))
                     .catch(error => res.status(400).json({ error }))
             }
