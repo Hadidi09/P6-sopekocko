@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
+
 
 const app = express();
 
@@ -24,12 +26,12 @@ app.use((req, res, next) => {
   next();
 });
 
-mongoose
-  .connect(
-    "mongodb+srv://hadra-student:sopekocko@sopekocko.qlesq.mongodb.net/projet-6?retryWrites=true&w=majority",
+mongoose.connect(
+  `mongodb+srv://${process.env.NAME}:${process.env.PASSWORD}@sopekocko.qlesq.mongodb.net/${process.env.DB_NAME}:?retryWrites=true&w=majority`
+    ,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
-  .then(() => console.log("Connexion à MongoDB réussie !"))
+  .then(() => console.log( "Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 app.use(bodyParser.json());
