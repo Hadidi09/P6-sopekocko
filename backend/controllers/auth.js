@@ -1,7 +1,9 @@
+//Variables
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/auth");
 
+//controllers pour la route signup
 exports.signup = (req, res, next) => {
   bcrypt
     .hash(req.body.password, 10)
@@ -12,32 +14,34 @@ exports.signup = (req, res, next) => {
       });
       user
         .save()
-        .then(() => res.status(201).json({ message: "Utlisateur crée !" }))
-        .catch((error) => res.status(400).json({ error }));
+        .then(() => res.json({ status: 201, message: "Utlisateur crée !" }))
+        .catch((error) => res.json({ status: 400, error: error }));
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) => res.json({ status: 500, error: error }));
 };
-
+//controllers pour la route login
 exports.login = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({ error: "utilisateur non trouvé !" });
+        return res.json({ status: 401, error: "utilisateur non trouvé !" });
       }
+
       bcrypt
         .compare(req.body.password, user.password)
         .then((valid) => {
           if (!valid) {
-            return res.status(401).json({ error: "Mot de passe incorrect !" });
+            return res.json({ status: 401, error: "Mot de passe incorrect !" });
           }
-          res.status(200).json({
+          res.json({
+            status: 200,
             userId: user._id,
             token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
               expiresIn: "24h",
             }),
           });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => res.json({ status: 500, error: error }));
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) => res.json({ status: 500, error: error }));
 };

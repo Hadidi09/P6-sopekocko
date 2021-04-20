@@ -1,5 +1,7 @@
+//Variables
 const Sauce = require("../models/sauces");
-
+const fs = require("fs");
+// controllers route Post pour la création de sauce
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
@@ -11,10 +13,10 @@ exports.createSauce = (req, res, next) => {
   });
   sauce
     .save()
-    .then(() => res.status(201).json({ message: "Sauce enregistré" }))
-    .catch((error) => res.status(400).json({ error }));
+    .then(() => res.json({ status: 201, message: "Sauce enregistré" }))
+    .catch((error) => res.json({ status: 400, error: error }));
 };
-
+// controllers route Post/id pour gérer les likes  et dislikes
 exports.createAddLikes = (req, res, next) => {
   const like = req.body.like;
 
@@ -29,13 +31,13 @@ exports.createAddLikes = (req, res, next) => {
           Sauce.updateOne(
             { _id: req.params.id },
             { $addToSet: { usersLiked: userId }, $inc: { likes: +1 } }
-          ).then(() => res.status(200).json("sauce aimée"));
+          ).then(() => res.json({ status: 200, message: "Sauce Like" }));
           break;
         case -1:
           Sauce.updateOne(
             { _id: req.params.id },
             { $addToSet: { usersDisLiked: userId }, $inc: { dislikes: +1 } }
-          ).then(() => res.status(200).json("sauce non aimée"));
+          ).then(() => res.json({ status: 200, message: "Sauce Dislike" }));
           break;
         case 0:
           if (sauce.likes) {
@@ -48,14 +50,14 @@ exports.createAddLikes = (req, res, next) => {
                 if (!liked) {
                   throw new Error("send message error");
                 }
-                return res.status(200).json(liked);
+                return res.json({ status: 200, liked });
               })
               .catch((error) => {
                 console.log(error);
-                return res.status(500).json({ error: error });
+                return res.json({ status: 500, error: error });
               });
           }
-          if (sauce.dislikes ) {
+          if (sauce.dislikes) {
             Sauce.updateOne(
               { _id: req.params.id },
 
@@ -65,12 +67,13 @@ exports.createAddLikes = (req, res, next) => {
                 if (!disliked) {
                   throw new Error("Send message error");
                 }
-                res.status(200).json(disliked);
+
+                res.json({ status: 200, disliked });
                 return;
               })
               .catch((error) => {
                 if (error) {
-                  return error;
+                  return res.json({ status: 500, error: error });
                 }
               });
           }
@@ -81,9 +84,9 @@ exports.createAddLikes = (req, res, next) => {
           console.log("NO LIKES Available");
       }
     })
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => res.json({ status: 400, error: error }));
 };
-
+// controllers route Put pour la modification d'une sauce
 exports.modifySauce = (req, res, next) => {
   const sauceObject = req.file
     ? {
@@ -97,24 +100,34 @@ exports.modifySauce = (req, res, next) => {
     { _id: req.params.id },
     { ...sauceObject, _id: req.params.id }
   )
-    .then(() => res.status(200).json({ message: "votre sauce a été modifié" }))
-    .catch((error) => res.status(400).json({ error }));
+    .then(() => res.json({ status: 200, message: "votre sauce a été modifié" }))
+    .catch((error) => res.json({ status: 400, error: error }));
 };
-
+// controllers route delete pour la suppréssion d'une sauce
 exports.deleteSauce = (req, res, next) => {
-  Sauce.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Votre sauce a été supprimé" }))
-    .catch((error) => res.status(400).json({ error }));
-};
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => {
+      const filename = sauce.imageUrl.split("/images/")[1];
+      fs.unlink(`images/${filename}`, () => {
+        Sauce.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).send({ message: "Objet supprimé !" }))
+          .catch((error) => res.json({ status: 400, error: error }));
+      });
+    })
 
+    .catch((error) => res.json({ status: 400, error: error }));
+};
+// controllers route Post pour la récupération de toutes les sauces
 exports.getAllSauce = (req, res, next) => {
   Sauce.find()
-    .then((sauces) => res.status(200).json(sauces))
-    .catch((error) => res.status(400).json({ error }));
+    .then((sauces) => {
+      res.status(200).send(sauces);
+    })
+    .catch((error) => res.json({ status: 400, error: error }));
 };
-
+// controllers route Post pour la récupération d'une seule sauce
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
-    .then((sauce) => res.status(200).json(sauce))
-    .catch((error) => res.status(404).json({ error }));
+    .then((sauce) => res.status(200).send(sauce))
+    .catch((error) => res.json({ status: 400, error: error }));
 };

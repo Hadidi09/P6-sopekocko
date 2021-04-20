@@ -1,5 +1,6 @@
+//Variables
 const jwt = require("jsonwebtoken");
-
+//middlware d'authentification avec l'utilisation du package jsonwebtoken
 module.exports = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
@@ -11,8 +12,6 @@ module.exports = (req, res, next) => {
       next();
     }
   } catch {
-    res.status(401).json({
-      error: new Error("Invalid request!"),
-    });
+    res.json({ status: 401, error: new Error("Invalid request!") });
   }
 };

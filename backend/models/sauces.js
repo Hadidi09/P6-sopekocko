@@ -1,5 +1,6 @@
+//variables
 const mongoose = require("mongoose");
-
+// Utilisation de la fonction Schema() de mongoose pour la création d'un schéma document pour une sauce
 const sauceSchema = mongoose.Schema({
   userId: { type: String, required: true },
   name: { type: String, required: true },
@@ -13,5 +14,5 @@ const sauceSchema = mongoose.Schema({
   usersLiked: { type: [String] },
   usersDisLiked: { type: [String] },
 });
-
+//exportation sauceSchema en  tant que modèle mongoose
 module.exports = mongoose.model("Sauce", sauceSchema);
