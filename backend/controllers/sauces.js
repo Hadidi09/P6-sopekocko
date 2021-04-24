@@ -73,7 +73,7 @@ exports.createAddLikes = (req, res, next) => {
               })
               .catch((error) => {
                 if (error) {
-                  return res.json({ status: 500, error: error });
+                  return res.json({ status: 500, error });
                 }
               });
           }
@@ -84,7 +84,7 @@ exports.createAddLikes = (req, res, next) => {
           console.log("NO LIKES Available");
       }
     })
-    .catch((error) => res.json({ status: 400, error: error }));
+    .catch((error) => res.json({ status: 400, error }));
 };
 // controllers route Put pour la modification d'une sauce
 exports.modifySauce = (req, res, next) => {

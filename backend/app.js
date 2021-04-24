@@ -3,7 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
+const mongoSanitize = require("express-mongo-sanitize");
 const path = require("path");
 
 //constante app en lui passant la fonction express(), permet de créer une application express
@@ -38,7 +39,9 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 // middelware Bodyparser permet de transformer le corps de notre requête en json
-app.use(bodyParser.json());
+app.use(express.json());
+//middelware qui empêche les injections dans la base de donnée
+app.use(mongoSanitize());
 //middelware qui indique à Express qu'il faut gérer la ressource "images" de manière statique
 app.use("/images", express.static(path.join(__dirname, "images")));
 //middelwares qui gerent les requetes envoyer aux routes de (sauceRoutes et authRoutes)

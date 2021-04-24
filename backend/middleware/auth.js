@@ -1,4 +1,4 @@
-//Variables
+// //Variables
 const jwt = require("jsonwebtoken");
 //middlware d'authentification avec l'utilisation du package jsonwebtoken
 module.exports = (req, res, next) => {
@@ -15,3 +15,4 @@ module.exports = (req, res, next) => {
     res.json({ status: 401, error: new Error("Invalid request!") });
   }
 };
+
