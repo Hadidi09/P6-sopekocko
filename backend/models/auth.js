@@ -8,8 +8,9 @@ const uniqueValidator = require("mongoose-unique-validator");
 const authSchema = mongoose.Schema({
   email: {
     type: String,
-    required: true,
+    required: [true,"Entrez votre Email"],
     unique: true,
+    validate: /^[a-z0-9_-]+@[a-z]+.[a-z]{2,3}$/
   },
   password: { type: String, required: true },
 });
