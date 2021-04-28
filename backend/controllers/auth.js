@@ -16,7 +16,7 @@ schema
 .has().not().spaces()         
 
 
-
+let regEmail = new RegExp('^[a-z0-9_-]+@[a-z]+.[a-z]{2,3}$')
 
 
 const emailMask2Options = {
@@ -35,7 +35,11 @@ exports.signup = (req, res, next) =>
       message: "Mot de passe non sécurisé, doit contenir au moins 8 caractères, 2 numéros, une MAJ, une MINUS, et pas d'espace !" });
     return false;
   }
- 
+  if (!req.body.email == regEmail)
+  {
+    res.json({ status: 401, message: "Entrez un email valide !!" })
+    return false;
+  }
     bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
