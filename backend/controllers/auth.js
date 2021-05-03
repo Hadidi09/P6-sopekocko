@@ -5,8 +5,9 @@ const User = require("../models/auth");
 const maskData = require('maskdata')
 const passwordValidator = require('password-validator');
 
+// schema de validation du mot de passe
 const schema = new passwordValidator();
-// Add properties to it
+// Ajout des propiètés du schema
 schema
 .is().min(8)                                    
 .is().max(24)                                  
@@ -15,10 +16,10 @@ schema
 .has().digits(2)                           
 .has().not().spaces()         
 
-
+// regex email
 let regEmail = new RegExp('^[a-z0-9_-]+@[a-z]+.[a-z]{2,3}$')
 
-
+// variables maskdata
 const emailMask2Options = {
   maskWith: "*", 
   unmaskedStartCharactersBeforeAt: 3,
@@ -31,13 +32,13 @@ exports.signup = (req, res, next) =>
 {
   if (!schema.validate(req.body.password)) {
 
-    res.json({status:401,
+    res.json({status:400,
       message: "Mot de passe non sécurisé, doit contenir au moins 8 caractères, 2 numéros, une MAJ, une MINUS, et pas d'espace !" });
     return false;
   }
   if (!req.body.email == regEmail)
   {
-    res.json({ status: 401, message: "Entrez un email valide !!" })
+    res.json({ status: 400, message: "Entrez un email valide !! Utilisez des caractères(Minus/MAJ), des numéros(0 et 9) ou des (_), Min: 8 caractères/max : 20 caractères, suivi d'un (@) de lettres (minuscules), d'un (.) enfin de lettres (minuscules)  Min: 2/max : 3" })
     return false;
   }
     bcrypt
@@ -64,7 +65,7 @@ exports.login = (req, res, next) => {
   User.findOne({ email: maskData.maskEmail2(req.body.email, emailMask2Options) })
     .then((user) => {
       if (!user) {
-        return res.json({ status: 401, error: "utilisateur non trouvé !" });
+        return res.json({ status: 401, error: "Email non valide !!" });
       }
 
       bcrypt
