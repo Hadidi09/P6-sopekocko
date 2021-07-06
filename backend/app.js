@@ -38,7 +38,7 @@ mongoose
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
-// middelware Bodyparser permet de transformer le corps de notre requête en json
+// middelware Bodyparser permet de prendre en charge les requêtes en json
 app.use(express.json());
 //middelware qui empêche les injections dans la base de donnée
 app.use(mongoSanitize());
